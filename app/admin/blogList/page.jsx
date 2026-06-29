@@ -4,7 +4,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 
-const page = () => {
+const Page = () => {
   const [blogs, setBlogs] = useState([]);
 
   const fetchBlogs = async () => {
@@ -19,7 +19,12 @@ const page = () => {
   }
 
   useEffect(() => {
-    fetchBlogs()
+    const loadBlogs = async () => {
+      const response = await axios.get('/api/blog');
+      setBlogs(response.data.blogs);
+    }
+
+    loadBlogs()
   }, [])
 
   return (
@@ -72,5 +77,5 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
 

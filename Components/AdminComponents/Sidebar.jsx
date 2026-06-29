@@ -5,8 +5,11 @@ import { usePathname, useRouter } from 'next/navigation'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
-const navLinks = [
-  { href: '/admin/addBlog', label: 'Add Blog', icon: '+' },
+const dashboardLinks = [
+  { href: '/dashboard/addBlog', label: 'Add Blog', icon: '+' },
+]
+
+const adminLinks = [
   { href: '/admin/blogList', label: 'Blog List', icon: '≡' },
   { href: '/admin/subscriptions', label: 'Subscriptions', icon: '✉' },
 ]
@@ -14,6 +17,9 @@ const navLinks = [
 const Sidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const navLinks = pathname.startsWith('/dashboard')
+    ? dashboardLinks
+    : adminLinks;
 
   const logoutHandler = async () => {
     try {
@@ -42,7 +48,7 @@ const Sidebar = () => {
       {/* Nav */}
       <nav className="flex-1 flex flex-col py-8 gap-1 px-3 sm:px-5">
         <p className="hidden sm:block font-body text-[9px] uppercase tracking-[0.25em] text-[#6C6863] mb-3 px-3">
-          Navigation
+          {pathname.startsWith('/dashboard') ? 'Dashboard' : 'Admin'}
         </p>
         {navLinks.map(({ href, label, icon }) => {
           const isActive = pathname === href;
@@ -84,4 +90,3 @@ const Sidebar = () => {
 }
 
 export default Sidebar
-

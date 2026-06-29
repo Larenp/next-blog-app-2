@@ -23,7 +23,7 @@ function LoginForm() {
 
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirectUrl = searchParams.get('redirect') || '/admin/addBlog';
+    const redirectUrl = searchParams.get('redirect') || '/dashboard/addBlog';
 
     const onChangeHandler = (e) => {
         setFormData({

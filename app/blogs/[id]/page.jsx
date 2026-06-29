@@ -5,18 +5,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState, use } from 'react'
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
   const { id } = use(params);
   const [data, setData] = useState(null);
 
-  const fetchBlogData = async () => {
-    const response = await axios.get('/api/blog', { params: { id } })
-    setData(response.data);
-  }
-
   useEffect(() => {
+    const fetchBlogData = async () => {
+      const response = await axios.get('/api/blog', { params: { id } })
+      setData(response.data);
+    }
+
     fetchBlogData();
-  }, [])
+  }, [id])
 
   if (!data) return null;
 
@@ -141,5 +141,4 @@ const page = ({ params }) => {
   )
 }
 
-export default page
-
+export default Page
