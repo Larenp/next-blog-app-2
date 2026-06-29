@@ -3,9 +3,29 @@ import BlogModel from "@/lib/models/BlogModel";
 const { NextResponse } = require("next/server")
 import { writeFile } from 'fs/promises'
 const fs = require('fs')
+import { blog_data } from "@/Assets/assets";
 
 const LoadDB = async () => {
   await ConnectDB();
+  try {
+    const count = await BlogModel.countDocuments();
+    if (count === 0) {
+      console.log("Database is empty. Seeding default blog data...");
+      const seededBlogs = blog_data.map(item => ({
+        title: item.title,
+        description: item.description,
+        category: item.category,
+        author: item.author,
+        image: typeof item.image === 'object' ? item.image.src : item.image,
+        authorImg: typeof item.author_img === 'object' ? item.author_img.src : (item.author_img || "/author_img.png"),
+        date: item.date || Date.now()
+      }));
+      await BlogModel.insertMany(seededBlogs);
+      console.log("Database seeded successfully with", seededBlogs.length, "blogs.");
+    }
+  } catch (error) {
+    console.error("Failed to seed database:", error);
+  }
 }
 
 LoadDB();
