@@ -1,10 +1,26 @@
 'use client'
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify';
 
 const Header = () => {
   const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
+
+  const fetchSession = async () => {
+    try {
+      const response = await axios.get('/api/auth/me');
+      if (response.data.success) {
+        setUser(response.data.user);
+      }
+    } catch (e) {
+      setUser(null);
+    }
+  }
+
+  useEffect(() => {
+    fetchSession();
+  }, [])
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -32,10 +48,32 @@ const Header = () => {
       <div className="gridline hidden lg:block" style={{ right: '8%' }} aria-hidden="true" />
 
       {/* Top navigation bar */}
-      <div className="relative z-20 flex items-center px-8 md:px-16 py-5 border-b border-[#1A1A1A]/10">
+      <div className="relative z-20 flex justify-between items-center px-8 md:px-16 py-5 border-b border-[#1A1A1A]/10">
         <a href="/" className="font-heading text-[#1A1A1A] text-xl tracking-tight font-normal select-none">
           The Editorial
         </a>
+        <div className="flex items-center gap-6">
+          {user ? (
+            <>
+              <span className="hidden sm:inline font-body text-[10px] uppercase tracking-[0.15em] text-[#6C6863]">
+                Hello, {user.name}
+              </span>
+              <a
+                href="/admin/addBlog"
+                className="font-body text-[10px] uppercase tracking-[0.2em] text-[#1A1A1A] hover:text-[#D4AF37] transition-colors duration-300 font-medium"
+              >
+                Dashboard
+              </a>
+            </>
+          ) : (
+            <a
+              href="/login"
+              className="font-body text-[10px] uppercase tracking-[0.2em] text-[#1A1A1A] hover:text-[#D4AF37] transition-colors duration-300 font-medium"
+            >
+              Sign In
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Hero section */}

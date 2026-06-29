@@ -1,7 +1,7 @@
 'use client'
 import axios from 'axios'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 
 const inputClass = `w-full sm:w-[520px] h-12 bg-transparent border-0 border-b border-[#1A1A1A]/40
@@ -13,13 +13,26 @@ const labelClass = `block font-body text-[10px] uppercase tracking-[0.25em] text
 
 const page = () => {
     const [image, setImage] = useState(false);
+    const [user, setUser] = useState(null);
     const [data, setData] = useState({
         title: "",
         description: "",
-        category: "Startup",
-        author: "Alex Bennett",
-        authorImg: "/author_img.png"
+        category: "Startup"
     })
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('/api/auth/me');
+                if (response.data.success) {
+                    setUser(response.data.user);
+                }
+            } catch (err) {
+                console.error("Failed to load user session", err);
+            }
+        };
+        fetchUser();
+    }, []);
 
     const onChangeHandler = (event) => {
         const name = event.target.name;
@@ -33,8 +46,6 @@ const page = () => {
         formData.append('title', data.title);
         formData.append('description', data.description);
         formData.append('category', data.category);
-        formData.append('author', data.author);
-        formData.append('authorImg', data.authorImg);
         formData.append('image', image);
         const response = await axios.post('/api/blog', formData);
         if (response.data.success) {
@@ -43,9 +54,7 @@ const page = () => {
             setData({
                 title: "",
                 description: "",
-                category: "Startup",
-                author: "Alex Bennett",
-                authorImg: "/author_img.png"
+                category: "Startup"
             });
         } else {
             toast.error("Error");
@@ -95,6 +104,12 @@ const page = () => {
                     hidden
                     required
                 />
+
+                {/* Author Info */}
+                <p className={labelClass}>Publishing As</p>
+                <div className="font-body text-xs text-[#1A1A1A] border-b border-[#1A1A1A]/10 pb-3">
+                    {user ? `${user.name} (${user.email})` : "Loading session..."}
+                </div>
 
                 {/* Title */}
                 <p className={labelClass}>Blog Title</p>

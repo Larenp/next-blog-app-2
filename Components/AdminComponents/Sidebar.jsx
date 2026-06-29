@@ -1,7 +1,9 @@
 'use client'
 import Link from 'next/link'
 import React from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const navLinks = [
   { href: '/admin/addBlog', label: 'Add Blog', icon: '+' },
@@ -11,6 +13,20 @@ const navLinks = [
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const logoutHandler = async () => {
+    try {
+      const response = await axios.post('/api/auth/logout');
+      if (response.data.success) {
+        toast.success(response.data.msg);
+        router.push('/');
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error("Failed to log out");
+    }
+  }
 
   return (
     <aside className="flex flex-col bg-[#F9F8F6] w-16 sm:w-64 h-screen border-r border-[#1A1A1A]/15 shrink-0">
@@ -24,7 +40,7 @@ const Sidebar = () => {
       </div>
 
       {/* Nav */}
-      <nav className="flex flex-col py-8 gap-1 px-3 sm:px-5">
+      <nav className="flex-1 flex flex-col py-8 gap-1 px-3 sm:px-5">
         <p className="hidden sm:block font-body text-[9px] uppercase tracking-[0.25em] text-[#6C6863] mb-3 px-3">
           Navigation
         </p>
@@ -49,6 +65,19 @@ const Sidebar = () => {
             </Link>
           );
         })}
+        
+        {/* Log Out button */}
+        <button
+          onClick={logoutHandler}
+          className="group flex items-center gap-3 px-3 py-3 transition-all duration-300 border-l-2 border-transparent text-[#6C6863] hover:border-[#D4AF37]/50 hover:text-[#1A1A1A] hover:bg-[#EBE5DE]/30 cursor-pointer mt-auto w-full text-left"
+        >
+          <span className="font-body text-base w-5 text-center shrink-0" aria-hidden="true">
+            ⎋
+          </span>
+          <span className="hidden sm:inline font-body text-xs uppercase tracking-[0.15em]">
+            Log Out
+          </span>
+        </button>
       </nav>
     </aside>
   )
