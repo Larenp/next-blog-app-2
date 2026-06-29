@@ -1,23 +1,31 @@
-import { assets } from "@/Assets/assets";
 import Sidebar from "@/Components/AdminComponents/Sidebar";
-import Image from "next/image";
-import { ToastContainer} from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Layout({ children }) {
     return (
         <>
-            <div className="flex">
-                <ToastContainer theme="dark"/>
+            <div className="flex min-h-screen bg-[#F9F8F6]">
+                <ToastContainer theme="dark" />
                 <Sidebar />
-                <div className="flex flex-col w-full">
-                    <div className="flex items-center justify-between w-full py-3 max-h-[60px] px-12 border-b border-black">
-                        <h3 className="font-medium">Admin Panel</h3>
-                        <Image src={assets.profile_icon} width={40} alt="" />
+                <div className="flex flex-col w-full overflow-hidden">
+                    {/* Top bar */}
+                    <div className="flex items-center justify-between w-full py-4 px-8 md:px-12 border-b border-[#1A1A1A]/15 bg-[#F9F8F6] shrink-0">
+                        <div className="flex items-center gap-3">
+                            <span className="block h-4 w-px bg-[#D4AF37]" aria-hidden="true" />
+                            <p className="font-body text-[10px] uppercase tracking-[0.25em] text-[#6C6863]">
+                                Admin Panel
+                            </p>
+                        </div>
+                        <div className="w-8 h-8 bg-[#1A1A1A] flex items-center justify-center">
+                            <span className="font-heading text-[#F9F8F6] text-xs">A</span>
+                        </div>
                     </div>
-                    {children}
+                    <div className="flex-1 overflow-auto">
+                        {children}
+                    </div>
                 </div>
             </div>
         </>
     )
-}
+}

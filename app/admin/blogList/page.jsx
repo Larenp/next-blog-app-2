@@ -5,8 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 
 const page = () => {
-
-  const [blogs,setBlogs] = useState([]);
+  const [blogs, setBlogs] = useState([]);
 
   const fetchBlogs = async () => {
     const response = await axios.get('/api/blog');
@@ -14,49 +13,64 @@ const page = () => {
   }
 
   const deleteBlog = async (mongoId) => {
-    const response = await axios.delete('/api/blog',{
-      params:{
-        id:mongoId
-      }
-    })
+    const response = await axios.delete('/api/blog', { params: { id: mongoId } })
     toast.success(response.data.msg);
     fetchBlogs();
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchBlogs()
-  },[])
+  }, [])
 
   return (
-    <div className='flex-1 pt-5 px-5 sm:pt-12 sm:pl-16'>
-      <h1>All blogs</h1>
-      <div className="relative h-[80vh] max-w-[850px] overflow-x-auto mt-4 border border-gray-400 scrollbar-hide">
-                <table className="w-full text-sm text-gray-500">
-                    <thead className="text-xs text-gray-700 text-left uppercase bg-gray-50">
-                        <tr>
-                            <th scope="col" className="hidden sm:block px-6 py-3">
-                                Author name
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Blog Title
-                            </th>
-                            <th scope="col" className="px-6 py-3">
-                                Date
-                            </th>
-                            <th scope="col" className="px-2 py-3">
-                                Action
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {blogs.map((item,index)=>{
-                          return <BlogTableItem key={index} mongoId={item._id} title={item.title} author={item.author} authorImg={item.authorImg} date={item.date} deleteBlog={deleteBlog}/>
-                      })}
-                    </tbody>
-                </table>
-            </div>
+    <div className="flex-1 px-8 md:px-12 pt-10 pb-16">
+
+      {/* Page heading */}
+      <div className="flex items-center gap-4 mb-2">
+        <span className="block h-px w-6 bg-[#D4AF37]" aria-hidden="true" />
+        <p className="font-body text-[10px] uppercase tracking-[0.3em] text-[#6C6863]">Content</p>
+      </div>
+      <h1 className="font-heading text-[#1A1A1A] text-3xl md:text-4xl tracking-tight mb-10">
+        All Articles
+      </h1>
+
+      {/* Table */}
+      <div className="border border-[#1A1A1A]/10 overflow-x-auto scrollbar-hide">
+        <table className="w-full min-w-[600px]">
+          <thead>
+            <tr className="border-b border-[#1A1A1A]/10 bg-[#EBE5DE]/30">
+              <th scope="col" className="hidden sm:table-cell px-6 py-4 text-left font-body text-[9px] uppercase tracking-[0.25em] text-[#6C6863]">
+                Author
+              </th>
+              <th scope="col" className="px-6 py-4 text-left font-body text-[9px] uppercase tracking-[0.25em] text-[#6C6863]">
+                Blog Title
+              </th>
+              <th scope="col" className="px-6 py-4 text-left font-body text-[9px] uppercase tracking-[0.25em] text-[#6C6863]">
+                Date
+              </th>
+              <th scope="col" className="px-6 py-4 text-left font-body text-[9px] uppercase tracking-[0.25em] text-[#6C6863]">
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {blogs.map((item, index) => (
+              <BlogTableItem
+                key={index}
+                mongoId={item._id}
+                title={item.title}
+                author={item.author}
+                authorImg={item.authorImg}
+                date={item.date}
+                deleteBlog={deleteBlog}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
 
 export default page
+
