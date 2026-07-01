@@ -20,7 +20,7 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const formData = await request.formData();
-    const email = formData.get("email");
+    const email = `${formData.get("email") || ""}`.trim().toLowerCase();
     
     if (!email) {
       return NextResponse.json({ success: false, msg: "Email is required" }, { status: 400 });
@@ -31,7 +31,7 @@ export async function POST(request) {
       return NextResponse.json({ success: false, msg: "Email already subscribed" });
     }
     
-    await EmailModel.create({ email });
+    await EmailModel.create({ email, active: true });
     
     return NextResponse.json({ success: true, msg: "Subscription Successful" });
   } catch (error) {
@@ -52,4 +52,3 @@ export async function DELETE(request) {
     return NextResponse.json({ success: false, msg: error.message }, { status: 500 });
   }
 }
-

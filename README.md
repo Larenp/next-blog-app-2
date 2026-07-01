@@ -2,6 +2,40 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+## Email Notifications
+
+This app uses [Resend](https://resend.com) to notify active subscribers when a new blog post is published.
+
+Create a local `.env.local` file using `.env.example` as the template:
+
+```bash
+RESEND_API_KEY=re_xxxxxxxxx
+RESEND_FROM_EMAIL="The Editorial <onboarding@resend.dev>"
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+EMAIL_BATCH_SIZE=25
+EMAIL_ALLOWED_RECIPIENTS=
+```
+
+Ask the site owner to replace `re_xxxxxxxxx` with their real Resend API key. For production, replace `RESEND_FROM_EMAIL` with a verified sender/domain from Resend.
+
+Notification flow:
+
+1. A signed-in author publishes a post through `/api/blog`.
+2. The blog is saved to MongoDB first.
+3. The route schedules `notifySubscribersOfNewPost` with Next.js `after()`, so email failures do not block publishing.
+4. The email service atomically claims the blog notification job to prevent duplicate emails for the same post.
+5. It fetches subscribers where `active !== false`, builds a responsive HTML email, and sends in batches with `Promise.all`.
+6. Delivery success/failure is recorded on the blog document under `emailNotification`.
+
+To test locally:
+
+1. Add your Resend key to `.env.local`.
+2. Keep `RESEND_FROM_EMAIL` as `onboarding@resend.dev` for a first sandbox test, and set `EMAIL_ALLOWED_RECIPIENTS` to your Resend account email. Remove `EMAIL_ALLOWED_RECIPIENTS` after verifying a sending domain.
+3. Start the app with `npm run dev`.
+4. Subscribe a test email from the homepage.
+5. Publish a blog post from the dashboard.
+6. Check the inbox and the server logs. If Resend is not configured or delivery fails, the blog still publishes and the error is logged.
+
 First, run the development server:
 
 ```bash
